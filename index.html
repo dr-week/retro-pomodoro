@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Minimal Retro Pomodoro</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      /* Time Setter Styling */
+      .time-setter {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.9rem;
+        color: #333;
+      }
+      .time-setter input {
+        width: 50px;
+        padding: 5px;
+        background: #eee;
+        border: 2px solid #555;
+        font-family: monospace;
+        text-align: center;
+        border-radius: 3px;
+      }
+      /* Minimal Vintage Background & Body */
+      body {
+        /* Pulling a worn paper/cardboard texture from Unsplash */
+        background-image:
+          linear-gradient(rgba(34, 34, 34, 0.05), rgba(34, 34, 34, 0.85)),
+          url("https://images.unsplash.com/photo-1522441815192-d9f04eb0615c?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+        background-size: cover;
+        background-position: center;
+        background-color: #222; /* Fallback color */
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        /* opacity: 0.5; */
+        font-family: monospace;
+      }
+      #app {
+        background: #d6d8d8;
+        padding: 20px;
+        border-radius: 40px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        width: 280px;
+      }
+
+      /* Round Vinyl Player Base */
+      .vinyl-player {
+        width: 240px;
+        height: 240px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        background: #111;
+      }
+
+      /* Pulled Image: Vinyl Grooves */
+      .vinyl-texture {
+        position: absolute;
+        width: 120%;
+        height: 120%;
+        object-fit: cover;
+        opacity: 0.5;
+      }
+
+      /* Center Record Label (Acts as the timer) */
+      .record-label {
+        background: #d9534f;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        border: 4px solid #111;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: rgb(228, 225, 225);
+      }
+
+      /* Spinning Animation */
+      .spin {
+        animation: rotate 1.8s linear infinite;
+      }
+      @keyframes rotate {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Pulled Image: Analog Meter */
+      /* The window keeps the zoomed image contained and adds the border */
+    .meter-window {
+      width: 100%; 
+      height: 80px; 
+      border-radius: 20px; 
+      border: 2px solid linear-gradient(rgba(34, 34, 34, 0.05), rgba(34, 34, 34, 0.85)), #555; 
+      overflow: hidden; /* Hides the edges of the zoomed image */
+      margin-top: 15px; /* Spacing below the record player */
+    }
+
+    /* The actual image inside the window */
+    .analog-meter {
+      
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      filter: sepia(0.6); 
+      
+      /* 1. THE ZOOM: Increase this number to zoom in more (e.g., 1.5, 2.0) */
+      transform: scale(1.5); 
+      
+      /* 2. THE SMOOTHNESS: 1s linear makes the ticking continuous */
+      transition: opacity 0.3s ease, object-position 1s linear; 
+    }
+      /* Minimal Controls */
+      .controls {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+      button {
+        background: #222;
+        color: #fff;
+        border: none;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-family: monospace;
+        border-radius: 3px;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+      }
+      button:active {
+        background: #555;
+        transform: scale(0.95);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Spinning Vinyl Record -->
+      <div class="vinyl-player" :class="{ spin: isRunning }">
+        <img
+          src="https://images.unsplash.com/photo-1632494425431-e8b9bc198390?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          class="vinyl-texture"
+        />
+        <div class="record-label">{{ timeDisplay }}</div>
+      </div>
+
+      <!-- Analog Meter -->
+      <div class="meter-window">
+        <img
+          src="https://images.unsplash.com/photo-1573655349936-de6bed86f839?q=80&w=720&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          class="analog-meter"
+          :style="{ opacity: isRunning ? 1 : 0.4, 
+        objectPosition: `50% ${meterPan}%` }"
+        />
+      </div>
+      <div class="time-setter" v-if="!isRunning">
+        <input
+          type="number"
+          v-model="customMinutes"
+          min="1"
+          max="120"
+          placeholder="Minutes"
+          style="width: 80px; padding: 5px; font-size: 1rem; text-align: center"
+        />
+        <span></span>
+        <button @click="setCustomTime">SET</button>
+      </div>
+      <div class="controls">
+        <button @click="start">PLAY</button>
+        <button @click="pause">PAUSE</button>
+        <button @click="reset">EJECT</button>
+      </div>
+    </div>
+
+    <script>
+      const { createApp, ref, computed } = Vue;
+
+      createApp({
+        setup() {
+          // Track both current time and total time for the percentage math
+          const customMinutes = ref(25);
+          const totalTime = ref(1500);
+          const time = ref(1500);
+
+          const isRunning = ref(false);
+          let interval = null;
+
+          // New function to apply custom time
+          const setCustomTime = () => {
+            const newTimeInSeconds = customMinutes.value * 60;
+            totalTime.value = newTimeInSeconds; // Remember total for the analog meter
+            time.value = newTimeInSeconds; // Set the actual countdown
+          };
+
+          const start = () => {
+            if (isRunning.value || time.value <= 0) return;
+            isRunning.value = true;
+            interval = setInterval(() => {
+              if (time.value > 0) time.value--;
+              else reset();
+            }, 1000);
+          };
+
+          const pause = () => {
+            isRunning.value = false;
+            clearInterval(interval);
+          };
+
+          const reset = () => {
+            pause();
+            time.value = totalTime.value; // Resets to your custom total
+          };
+
+          const timeDisplay = computed(() => {
+            const m = Math.floor(time.value / 60)
+              .toString()
+              .padStart(2, "0");
+            const s = (time.value % 60).toString().padStart(2, "0");
+            return `${m}:${s}`;
+          });
+
+          // Updated to use totalTime instead of a hardcoded 1500
+          const meterPan = computed(() => {
+            return (time.value / totalTime.value) * 100;
+          });
+
+          // Don't forget to return the new variables and functions!
+          return {
+            timeDisplay,
+            isRunning,
+            start,
+            pause,
+            reset,
+            meterPan,
+            customMinutes,
+            setCustomTime,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
