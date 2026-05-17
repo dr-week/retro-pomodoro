@@ -2,71 +2,54 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Minimal Retro Pomodoro</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
-      /* Time Setter Styling */
-      .time-setter {
-        margin-top: 15px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        font-size: 0.9rem;
-        color: #333;
-      }
-      .time-setter input {
-        width: 50px;
-        padding: 5px;
-        background: #eee;
-        border: 2px solid #555;
-        font-family: monospace;
-        text-align: center;
-        border-radius: 3px;
-      }
       /* Minimal Vintage Background & Body */
       body {
-        /* Pulling a worn paper/cardboard texture from Unsplash */
         background-image:
           linear-gradient(rgba(34, 34, 34, 0.05), rgba(34, 34, 34, 0.85)),
           url("https://images.unsplash.com/photo-1522441815192-d9f04eb0615c?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
         background-size: cover;
         background-position: center;
-        background-color: #222; /* Fallback color */
-
+        background-color: #222; 
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh; /* Changed to min-height for mobile scrolling */
         margin: 0;
-        /* opacity: 0.5; */
         font-family: monospace;
       }
+
+      /* INCREASED SIZE: Main App Container */
       #app {
         background: #d6d8d8;
-        padding: 20px;
+        padding: 30px; /* More padding */
         border-radius: 40px;
-        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.4);
         text-align: center;
-        width: 280px;
+        
+        /* Made responsive: takes up 95% of phone screen, caps at 420px on desktop */
+        width: 95%;
+        max-width: 420px; 
       }
 
-      /* Round Vinyl Player Base */
+      /* INCREASED SIZE: Round Vinyl Player Base */
       .vinyl-player {
-        width: 240px;
-        height: 240px;
-        margin: 0 auto 15px;
+        width: 320px; /* Scaled up from 240px */
+        height: 320px; /* Scaled up from 240px */
+        margin: 0 auto 20px;
         border-radius: 50%;
         position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.5);
         overflow: hidden;
         background: #111;
       }
 
-      /* Pulled Image: Vinyl Grooves */
       .vinyl-texture {
         position: absolute;
         width: 120%;
@@ -75,75 +58,102 @@
         opacity: 0.5;
       }
 
-      /* Center Record Label (Acts as the timer) */
+      /* INCREASED SIZE: Center Record Label & Text */
       .record-label {
         background: #d9534f;
-        width: 80px;
-        height: 80px;
+        width: 110px; /* Scaled up from 80px */
+        height: 110px; /* Scaled up from 80px */
         border-radius: 50%;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 2;
-        border: 4px solid #111;
-        font-size: 1.2rem;
+        border: 5px solid #111;
+        font-size: 1.8rem; /* Much larger timer text */
         font-weight: bold;
         color: rgb(228, 225, 225);
       }
 
-      /* Spinning Animation */
       .spin {
         animation: rotate 1.8s linear infinite;
       }
       @keyframes rotate {
-        100% {
-          transform: rotate(360deg);
-        }
+        100% { transform: rotate(360deg); }
       }
 
-      /* Pulled Image: Analog Meter */
-      /* The window keeps the zoomed image contained and adds the border */
-    .meter-window {
-      width: 100%; 
-      height: 80px; 
-      border-radius: 20px; 
-      border: 2px solid linear-gradient(rgba(34, 34, 34, 0.05), rgba(34, 34, 34, 0.85)), #555; 
-      overflow: hidden; /* Hides the edges of the zoomed image */
-      margin-top: 15px; /* Spacing below the record player */
-    }
+      /* INCREASED SIZE: Now Playing Text */
+      .now-playing {
+        margin-top: 10px;
+        margin-bottom: -5px; 
+        font-size: 0.9rem; /* Larger font */
+        color: #333;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-    /* The actual image inside the window */
-    .analog-meter {
-      
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
-      filter: sepia(0.6); 
-      
-      /* 1. THE ZOOM: Increase this number to zoom in more (e.g., 1.5, 2.0) */
-      transform: scale(1.5); 
-      
-      /* 2. THE SMOOTHNESS: 1s linear makes the ticking continuous */
-      transition: opacity 0.3s ease, object-position 1s linear; 
-    }
-      /* Minimal Controls */
-      .controls {
-        margin-top: 15px;
+      /* INCREASED SIZE: Analog Meter Window */
+      .meter-window {
+        width: 100%; 
+        height: 120px; /* Taller window (up from 80px) */
+        border-radius: 20px; 
+        border: 2px solid #555; 
+        overflow: hidden; 
+        margin-top: 15px; 
+      }
+
+      .analog-meter {
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        filter: sepia(0.6); 
+        transform: scale(1.5); 
+        transition: opacity 0.3s ease, object-position 1s linear; 
+      }
+
+      /* INCREASED SIZE: Time Setter */
+      .time-setter {
+        margin-top: 20px;
         display: flex;
+        justify-content: center;
+        align-items: center;
         gap: 10px;
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: bold;
+      }
+      .time-setter input {
+        width: 70px; /* Wider input box */
+        padding: 10px; /* Taller input box */
+        font-size: 1.2rem; /* Bigger text */
+        background: #eee;
+        border: 2px solid #555;
+        font-family: monospace;
+        text-align: center;
+        border-radius: 5px;
+      }
+
+      /* INCREASED SIZE: Buttons */
+      .controls {
+        margin-top: 20px;
+        display: flex;
+        gap: 15px;
         justify-content: center;
       }
       button {
         background: #222;
         color: #fff;
         border: none;
-        padding: 8px 15px;
+        padding: 15px 30px; /* Fat-finger friendly padding */
+        font-size: 1.2rem; /* Larger button text */
+        font-weight: bold;
         cursor: pointer;
         font-family: monospace;
-        border-radius: 3px;
-        transition:
-          background 0.2s,
-          transform 0.1s;
+        border-radius: 8px; /* Softer curves */
+        transition: background 0.2s, transform 0.1s;
       }
       button:active {
         background: #555;
@@ -153,7 +163,6 @@
   </head>
   <body>
     <div id="app">
-      <!-- Spinning Vinyl Record -->
       <div class="vinyl-player" :class="{ spin: isRunning }">
         <img
           src="https://images.unsplash.com/photo-1632494425431-e8b9bc198390?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -162,7 +171,10 @@
         <div class="record-label">{{ timeDisplay }}</div>
       </div>
 
-      <!-- Analog Meter -->
+      <div class="now-playing" v-if="isRunning">
+        {{ playlist[currentTrackIndex].title }}
+      </div>
+
       <div class="meter-window">
         <img
           src="https://images.unsplash.com/photo-1573655349936-de6bed86f839?q=80&w=720&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -171,21 +183,13 @@
         objectPosition: `50% ${meterPan}%` }"
         />
       </div>
+      
       <div class="time-setter" v-if="!isRunning">
-        <input
-          type="number"
-          v-model="customMinutes"
-          min="1"
-          max="120"
-          placeholder="Minutes"
-          style="width: 80px; padding: 5px; font-size: 1rem; text-align: center"
-        />
-        <span></span>
-        <button @click="setCustomTime">SET</button>
+        <input type="number" v-model.number="customMinutes" min="1" max="120" />
+        <span>MIN</span>
       </div>
       <div class="controls">
-        <button @click="start">PLAY</button>
-        <button @click="pause">PAUSE</button>
+        <button @click="togglePlayPause">{{ isRunning ? 'PAUSE' : 'PLAY' }}</button>
         <button @click="reset">EJECT</button>
       </div>
     </div>
@@ -195,38 +199,71 @@
 
       createApp({
         setup() {
-          // Track both current time and total time for the percentage math
           const customMinutes = ref(25);
           const totalTime = ref(1500);
           const time = ref(1500);
-
+          
           const isRunning = ref(false);
           let interval = null;
 
-          // New function to apply custom time
-          const setCustomTime = () => {
-            const newTimeInSeconds = customMinutes.value * 60;
-            totalTime.value = newTimeInSeconds; // Remember total for the analog meter
-            time.value = newTimeInSeconds; // Set the actual countdown
-          };
+          const playlist = [
+          { 
+            title: "09 Underwater Disco", 
+            url: "https://archive.org/download/w-w-w-d-e-e-p-d-i-v-e-c-o-m-wg7bkk/Webinar%E2%84%A2%20-%20w%20w%20w%20.%20d%20e%20e%20p%20d%20i%20v%20e%20.%20c%20o%20m%20-%2009%20Underwater%20Disco.flac" 
+          },
+          { 
+            title: "10 Vaporwave Mall", 
+            url: "https://archive.org/download/w-w-w-d-e-e-p-d-i-v-e-c-o-m-wg7bkk/Webinar%E2%84%A2%20-%20w%20w%20w%20.%20d%20e%20e%20p%20d%20i%20v%20e%20.%20c%20o%20m%20-%2010%20Welcome%20To%20The%20Mall.flac" 
+          }
+        ];
+
+        const currentTrackIndex = ref(0);
+        
+        const bgMusic = new Audio(playlist[currentTrackIndex.value].url);
+        bgMusic.volume = 0.5;
+
+        bgMusic.addEventListener('ended', () => {
+          currentTrackIndex.value = (currentTrackIndex.value + 1) % playlist.length;
+          bgMusic.src = playlist[currentTrackIndex.value].url;
+          bgMusic.play();
+        });
 
           const start = () => {
-            if (isRunning.value || time.value <= 0) return;
+            if (isRunning.value) return;
+
+            const expectedSeconds = customMinutes.value * 60;
+            if (time.value === totalTime.value) {
+              totalTime.value = expectedSeconds;
+              time.value = expectedSeconds;
+            }
             isRunning.value = true;
+            bgMusic.play(); 
+
             interval = setInterval(() => {
               if (time.value > 0) time.value--;
-              else reset();
-            }, 1000);
-          };
+               else reset(); 
+             }, 1000);
+          }
 
           const pause = () => {
             isRunning.value = false;
             clearInterval(interval);
+            bgMusic.pause(); 
+          };
+
+          const togglePlayPause = () => {
+            if (isRunning.value) {
+              pause();
+            } else {
+              start();
+            }
           };
 
           const reset = () => {
             pause();
-            time.value = totalTime.value; // Resets to your custom total
+            time.value = totalTime.value; 
+            bgMusic.pause(); 
+            bgMusic.currentTime = 0; 
           };
 
           const timeDisplay = computed(() => {
@@ -237,12 +274,10 @@
             return `${m}:${s}`;
           });
 
-          // Updated to use totalTime instead of a hardcoded 1500
           const meterPan = computed(() => {
             return (time.value / totalTime.value) * 100;
           });
 
-          // Don't forget to return the new variables and functions!
           return {
             timeDisplay,
             isRunning,
@@ -251,7 +286,9 @@
             reset,
             meterPan,
             customMinutes,
-            setCustomTime,
+            togglePlayPause,
+            playlist,
+            currentTrackIndex
           };
         },
       }).mount("#app");
