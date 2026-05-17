@@ -75,7 +75,7 @@
       }
 
       .spin {
-        animation: rotate 1.8s linear infinite;
+        animation: rotate 1.8s linear infinite ;
       }
       @keyframes rotate {
         100% { transform: rotate(360deg); }
@@ -103,6 +103,7 @@
         border: 2px solid #555; 
         overflow: hidden; 
         margin-top: 15px; 
+        position: relative;
       }
 
       .analog-meter {
@@ -112,6 +113,35 @@
         filter: sepia(0.6); 
         transform: scale(1.5); 
         transition: opacity 0.3s ease, object-position 1s linear; 
+      }
+
+      /* Glowing Overlay Text */
+      .now-playing {
+        position: absolute; /* Sticks the text over the image */
+        bottom: 10px;       /* Pushes it near the bottom edge */
+        width: 100%;        /* Spans the whole width */
+        text-align: center; /* Centers the text perfectly */
+        z-index: 10;        /* Ensures it sits on top of the image */
+        
+        font-size: 0.95rem;
+        color: #fff; /* White text looks best with a cyan glow */
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        white-space: prewrap; /* Allows text to wrap if it's too long */
+        
+        /* Triggers the pulsing animation below */
+        animation: textGlowPulse 1.5s infinite alternate;
+      }
+
+      /* The Animation Keyframes */
+      @keyframes textGlowPulse {
+        from { 
+          text-shadow: 0 0 2px #fff, 0 0 5px #0ff; 
+        }
+        to { 
+          text-shadow: 0 0 5px #fff, 0 0 15px #0ff, 0 0 30px #0ff; 
+        }
       }
 
       /* INCREASED SIZE: Time Setter */
@@ -171,9 +201,7 @@
         <div class="record-label">{{ timeDisplay }}</div>
       </div>
 
-      <div class="now-playing" v-if="isRunning">
-        {{ playlist[currentTrackIndex].title }}
-      </div>
+      
 
       <div class="meter-window">
         <img
@@ -182,6 +210,9 @@
           :style="{ opacity: isRunning ? 1 : 0.4, 
         objectPosition: `50% ${meterPan}%` }"
         />
+        <div class="now-playing" v-if="isRunning">
+        {{ playlist[currentTrackIndex].title }}
+      </div>
       </div>
       
       <div class="time-setter" v-if="!isRunning">
