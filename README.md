@@ -1,6 +1,8 @@
 # Retro Vinyl Pomodoro Timer
 
 A minimal, retro-style Pomodoro timer built in a single HTML file using Vue 3. 
+https://dr-week.github.io/retro-pomodoro/
+click to view!
 
 ## Features
 * **Spinning Vinyl Record:** The record spins when the timer plays.
